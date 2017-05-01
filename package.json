@@ -8,6 +8,10 @@
     "cli"
   ],
   "main": "index.js",
+  "bin": {
+    "sauceconfig": "bin/sauceconfig.js",
+    "sc-autocomplete": "bin/autocomplete.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
