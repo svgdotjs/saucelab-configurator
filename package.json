@@ -1,0 +1,20 @@
+{
+  "name": "saucelab-configurator",
+  "version": "1.0.0",
+  "description": "A cli tool to create configurations objects for karma-saucelabs-launcher",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/svgdotjs/saucelab-configurator.git"
+  },
+  "github": "https://github.com/svgdotjs/saucelab-configurator",
+  "author": "dotnetcarpenter <jon@svgjs.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "flow-bin": "^0.45.0",
+    "flow-remove-types": "^1.2.0"
+  }
+}
