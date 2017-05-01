@@ -2,6 +2,7 @@
   "name": "saucelab-configurator",
   "version": "1.0.0",
   "description": "A cli tool to create configurations objects for karma-saucelabs-launcher",
+  "keywords": ["karma", "fpm", "cli"], 
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
