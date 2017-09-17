@@ -98,6 +98,11 @@ function Prelude() {
       ? removeDuplicates(xs)
       : [x].concat(removeDuplicates(xs))
   }
+  function removeDuplicates(a) {
+    let xs = []
+    new Set(a).forEach(x => xs.push(x))
+    return xs
+  }
   // removeDuplicates :: Eq a => [a] -> [a]
   function removeDuplicates2(a) {
     let xs = a.slice()
@@ -106,12 +111,7 @@ function Prelude() {
       (seen, x) => {
         return elem(x, seen) ? seen : seen.concat([x])
       }, [x])
-  }
-  function removeDuplicates(a) {
-    let xs = []
-    new Set(a).forEach(x => xs.push(x))
-    return xs
-  }
+    }
   function identity(x) {
     return x
   }

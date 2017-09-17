@@ -1,7 +1,5 @@
 #!/bin/sh
 ':' //; exec "$(command -v nodejs || command -v node)" "$0" "$@"
 
-'use strict'
-
-console.log('Hello world!');
-
+process.env.DEBUG = process.env.DEBUG || 'tabtab*';
+require('../src/cli')

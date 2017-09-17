@@ -9,8 +9,7 @@
   ],
   "main": "index.js",
   "bin": {
-    "sauceconfig": "bin/sauceconfig.js",
-    "sc-autocomplete": "bin/autocomplete.js"
+    "sauceconfig": "bin/sauceconfig"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -30,5 +29,7 @@
     "url": "https://github.com/svgdotjs/saucelab-configurator/issues"
   },
   "homepage": "https://github.com/svgdotjs/saucelab-configurator#readme",
-  "dependencies": {}
+  "dependencies": {
+    "tabtab": "^2.2.2"
+  }
 }

@@ -79,8 +79,8 @@ function predicateBuilder() {
   const API = {
     browser(name) {
       log("browser", name)
-      //log(compose())
-      previousExpressions.add(browserNames)
+      predicates.push(compose(filter(browser(name)), browserNames))
+      // previousExpressions.add(browserNames)
       return this
       //return buildAPI(API.version)
     },
@@ -104,12 +104,15 @@ function predicateBuilder() {
       predicates.push(p)
       return this
     },
-    set test(p) {
-      predicates.push(p)
-    },
-    get test() {
-      return predicates
+    exec() {
+      return predicates.reduce((a,f) => f(a), availablePlatforms)
     }
+    // set test(p) {
+    //   predicates.push(p)
+    // },
+    // get test() {
+    //   return predicates.reduce((a,f) => f(a), availablePlatforms)
+    // }
   }
 
   return API
@@ -150,15 +153,18 @@ function predicateBuilder() {
 }
 
 let predicate = predicateBuilder()
-compose(log, removeDuplicates, sort, map(lowerCase), map(dot('browserName')))(predicate.browsers)
+// compose(log, removeDuplicates, sort, map(lowerCase), map(dot('browserName')))(predicate.browsers)
 // log(predicate.browser('opera')/*.platforms*/)
+
 /*
 predicate.test = predicate.browser('opera').version('12').platform('win xp')
 predicate.test = predicate.platform('android').browser('android')
 predicate.test = predicate.platform('ios').top(1)
 predicate.test = predicate.browser('edge').version('latest')
 */
-log(predicate.test) // -> [{},{},{}] without duplicates
+
+predicate.browser('firefox')
+log(predicate.exec()) // -> [{},{},{}] without duplicates
 
 /**
  * Filter to select objects that contain the property,
@@ -190,3 +196,20 @@ function List() {
   function fst(a) { return a[0] }
   function snd(a) { return a[1] }
 }
+
+
+// diff between partial and curry
+// https://github.com/lstrojny/functional-php/blob/master/docs/functional-php.md#currying
+// the following doesn't work yet -
+/*
+function add($a, $b, $c, $d) {
+    return $a + $b + $c + $d;
+}
+
+let $curriedAdd = curry('add');
+
+let $add10 = $curriedAdd(10);
+let $add15 = $add10(5);
+let $add42 = $add15(27);
+log($add42(10))
+ */
