@@ -2,30 +2,14 @@
 
 'use strict'
 
+module.exports = predicateBuilder
+
 const availablePlatforms = require('./platforms')
 const Prelude = require('./lib/Prelude')
-
-/**
- * Module loader that curries every exported function.
- * @param {object} module The module name you want to import from. E.I Prelude
- * @return {object} All functions in the module. It's up to you if/how, you want to assign them.
- */
-function from(module) {
-  let exports = {},
-    P = Prelude(),
-    each = P.each,
-    curry = P.curry,
-    assign = f => exports[f.name] = curry(f)
-
-  each(assign, module())
-
-  return exports
-}
-
+const from = require('./lib/from')
 
 let compose, curry, filter, dot, log, each, map, take, duplicates, sort, removeDuplicates
 ({compose, curry, filter, dot, log, each, map, take, duplicates, sort, removeDuplicates} = from (Prelude))
-
 
 // let fstTwo = map(take(2))
 // console.log(fstTwo(['jim', 'kate']))
@@ -153,18 +137,15 @@ function predicateBuilder() {
 }
 
 let predicate = predicateBuilder()
+//TODO: move all tests to tests/predicateBuilder.js
 // compose(log, removeDuplicates, sort, map(lowerCase), map(dot('browserName')))(predicate.browsers)
 // log(predicate.browser('opera')/*.platforms*/)
-
 /*
 predicate.test = predicate.browser('opera').version('12').platform('win xp')
 predicate.test = predicate.platform('android').browser('android')
 predicate.test = predicate.platform('ios').top(1)
 predicate.test = predicate.browser('edge').version('latest')
 */
-
-predicate.browser('firefox')
-log(predicate.exec()) // -> [{},{},{}] without duplicates
 
 /**
  * Filter to select objects that contain the property,
