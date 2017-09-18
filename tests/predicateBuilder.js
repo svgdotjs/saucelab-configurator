@@ -12,7 +12,7 @@ const test = testBuilder()
 function testBuilder() {
   const startTime = Date.now()
   const tests = []
-  let timer
+  let timer, hadError = false
   return function test(desc, f) {
     tests.push({desc, f})
     clearTimeout(timer)
@@ -21,22 +21,29 @@ function testBuilder() {
       each((d, n) => {
         if(d) {
           log(`Running test: ${d.desc}`)
-          d.f()
+          try {
+            d.f()
+          } catch(err) {
+            console.warn(err)
+            hadError = true
+          }
           tests[n] = null
         }
       }, tests)
 
-      if(tests.every(t => t === null)) {
+      if(!hadError && tests.every(t => t === null)) {
         log(`\n⍻ All tests pass (${Date.now() - startTime}ms)`)
         process.exit(0)
+      } else if(hadError) {
+        process.exit(1)
       }
 
-    }, 1)
+    }, 0)
   }
 }
 
 test('predicate.browser', () => {
-  test('firefox', () => {
+  test('Firefox', () => {
     let actual
     let expected = [ { base: 'SauceLabs', browserName: 'firefox', version: 'latest' } ]
 
@@ -44,10 +51,10 @@ test('predicate.browser', () => {
     predicate.browser('firefox')
     actual = predicate.exec()
 
-    is(actual, expected)
+    compare(actual, expected)
   })
 
-  test('opera', () => {
+  test('Opera', () => {
     let actual
     let expected = [{
         base: 'SauceLabs',
@@ -73,7 +80,23 @@ test('predicate.browser', () => {
     predicate.browser('opera')
     actual = predicate.exec()
 
-    is(actual, expected)
+    compare(actual, expected)
+  })
+
+  test('Opera 11.64 on WinXP', () => {
+    let actual
+    let expected = [{
+      browserName: 'opera',
+      platform: 'Windows XP',
+      version: '11.64',
+      base: 'SauceLabs'
+    }]
+
+    let predicate = predicateBuilder()
+    predicate.browser('opera').version('11').platform('windows')
+    actual = predicate.exec()
+
+    compare(actual, expected)
   })
 })
 
@@ -89,12 +112,12 @@ predicate.test = predicate.browser('edge').version('latest')
 */
 
 
-function is(a, b) {
+function compare(a, b) {
   let testRan = false
   for(let prop in a) {
     if(!Object.prototype.hasOwnProperty.call(a, prop)) continue
 
-    if(a[prop] instanceof Object) is(a[prop], b[prop])
+    if(a[prop] instanceof Object) compare(a[prop], b[prop])
     else if(a[prop] !== b[prop]) throw new Error(`${a[prop]} is not the same as ${b[prop]}`)
 
     testRan = true

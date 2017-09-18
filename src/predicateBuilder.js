@@ -25,9 +25,11 @@ function predicateBuilder() {
   const platforms     = filter(d => !!d.platform) // filter(compose(is, dot('platform')))
   const platformNames = filter(d => !!d.platformName) // filter(compose(is, dot('platformName')))
   const browserNames  = filter(d => !!d.browserName) // filter(compose(is, dot('browserName')))
+  const versions      = filter(d => !!d.version)
   // filter helper
   const browser   = curry( (name, d) => d.browserName.toLowerCase() === name )
   const OS        = curry( (name, d) => d.platform.toLowerCase().indexOf(name) !== -1 )
+  const version   = curry( (v, d)    => d.version.startsWith(v))
   // filter
   const chrome    = browser('chrome')
   const IE        = browser('internet explorer')
@@ -73,19 +75,17 @@ function predicateBuilder() {
       return browserNames(availablePlatforms)
     },
     platform(name) {
-      log("platform", name)
-      previousExpressions.add()
+      // log("platform", name)
+      predicates.push(compose(filter(OS(name)), platforms))
+      return this
     },
     get platforms() {
       previousExpressions.clear()
       return safariPlatforms(availablePlatforms)//platforms(availablePlatforms)
     },
-    version(version) {
-      log("version", version)
-      return this
-    },
-    addTest(p) {
-      predicates.push(p)
+    version(v) {
+      // log("version", v)
+      predicates.push(compose(filter(version(v)), versions))
       return this
     },
     exec() {
