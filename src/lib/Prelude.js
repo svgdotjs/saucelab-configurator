@@ -19,7 +19,8 @@ function Prelude() {
     take,
     duplicates,
     sort,
-    removeDuplicates
+    removeDuplicates,
+    repeat
   }
 
   function curry(f) {
@@ -114,5 +115,13 @@ function Prelude() {
     }
   function identity(x) {
     return x
+  }
+  function repeat(value, times) {
+    return generator(() => value, 0, times).join('')
+  }
+  function generator(f, start, stop, accu = []) {
+    if(start >= stop) return accu
+    accu.push(f(start))
+    return generator(f, start + 1, stop, accu) // tail call
   }
 }

@@ -1,28 +1,27 @@
 'use strict'
 
-// const availablePlatforms = require('../src/platforms')
 const Prelude = require('../src/lib/Prelude')
 const from = require('../src/lib/from')
 const predicateBuilder = require('../src/predicateBuilder')
 
-let log, each
-({log, each} = from (Prelude))
+let log, each, repeat
+({log, each, repeat} = from (Prelude))
 
 const test = testBuilder()
 function testBuilder() {
   const startTime = Date.now()
   const tests = []
-  let timer, hadError = false
+  let timer, hadError = false, indent = 0
 
   return function test(desc, f) {
-    // TODO: turns below logic into a composition of functions
+    // TODO: turn below logic into a composition of functions
     tests.push({desc, f})
     clearTimeout(timer)
     timer = setTimeout(() => {
 
       each((d, n) => {
         if(d) {
-          log(`Running test: ${d.desc}`)
+          log(`${repeat('\t', indent)}Running: ${d.desc}`)
           try {
             d.f()
           } catch(err) {
@@ -40,12 +39,14 @@ function testBuilder() {
         process.exit(1)
       }
 
+      indent++
+
     }, 0)
   }
 }
 
-test('predicate.browser', () => {
-  test('Firefox', () => {
+test('Prepare predicate.browser', () => {
+  test('test predicate.browser("firefox")', () => {
     let actual
     let expected = [ { base: 'SauceLabs', browserName: 'firefox', version: 'latest' } ]
 
@@ -56,7 +57,7 @@ test('predicate.browser', () => {
     compare(actual, expected)
   })
 
-  test('Opera', () => {
+   test('test predicate.browser("opera")', () => {
     let actual
     let expected = [{
         base: 'SauceLabs',
@@ -85,7 +86,7 @@ test('predicate.browser', () => {
     compare(actual, expected)
   })
 
-  test('Opera 11.64 on WinXP', () => {
+  test('test predicate.browser("opera").version("11").platform("windows") (Opera 11.64 on WinXP)', () => {
     let actual
     let expected = [{
       browserName: 'opera',
@@ -102,35 +103,55 @@ test('predicate.browser', () => {
   })
 })
 
-test('predicate.platform = android', () => {
-  let actual
-  let expected = [{
-    base: 'SauceLabs',
-    browserName: 'Android',
-    appiumVersion: '1.5.3',
-    deviceName: 'Samsung Galaxy S7 Device',
-    deviceOrientation: 'portrait',
-    platformVersion: '6.0',
-    platformName: 'Android'
-  }]
+test('Prepare predicate.platform', () => {
+  test('test predicate.platform("android")', () => {
+    let actual
+    let expected = [{
+      base: 'SauceLabs',
+      browserName: 'Android',
+      appiumVersion: '1.5.3',
+      deviceName: 'Samsung Galaxy S7 Device',
+      deviceOrientation: 'portrait',
+      platformVersion: '6.0',
+      platformName: 'Android'
+    }]
 
-  let predicate = predicateBuilder()
-  predicate.platform('android')
-  actual = predicate.exec()
+    let predicate = predicateBuilder()
+    predicate.platform('android')
+    actual = predicate.exec()
 
-  compare(actual, expected)
+    compare(actual, expected)
+  })
+
+  test('test predicate.platform("android").browser("android")', () => {
+    let actual
+    let expected = [{
+      base: 'SauceLabs',
+      browserName: 'Android',
+      appiumVersion: '1.5.3',
+      deviceName: 'Samsung Galaxy S7 Device',
+      deviceOrientation: 'portrait',
+      platformVersion: '6.0',
+      platformName: 'Android'
+    }]
+
+    let predicate = predicateBuilder()
+    predicate.platform('android').browser('android')
+    actual = predicate.exec()
+    compare(actual, expected)
+  })
 })
 
-
-// compose(log, removeDuplicates, sort, map(lowerCase), map(dot('browserName')))(predicate.browsers)
+/*
+query for all available browsers:
+compose(log, removeDuplicates, sort, map(lowerCase), map(dot('browserName')))(predicate.browsers)
+*/
 // log(predicate.browser('opera')/*.platforms*/)
 
 /*
-predicate.test = predicate.platform('android').browser('android')
 predicate.test = predicate.platform('ios').top(1)
 predicate.test = predicate.browser('edge').version('latest')
 */
-
 
 function compare(a, b) {
   let testRan = false
