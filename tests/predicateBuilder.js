@@ -101,6 +101,22 @@ test('Prepare predicate.browser', () => {
 
     compare(actual, expected)
   })
+
+  test('test predicate.browser("microsoftedge").version("latest")', () => {
+    let actual
+    let expected = [{
+      base: 'SauceLabs',
+      browserName: 'MicrosoftEdge',
+      version: 'latest',
+      platform: 'Windows 10'
+    }]
+
+    let predicate = predicateBuilder()
+    predicate.browser('microsoftedge').version('latest')
+    actual = predicate.exec()
+
+    compare(actual, expected)
+  })
 })
 
 test('Prepare predicate.platform', () => {
@@ -150,7 +166,6 @@ compose(log, removeDuplicates, sort, map(lowerCase), map(dot('browserName')))(pr
 
 /*
 predicate.test = predicate.platform('ios').top(1)
-predicate.test = predicate.browser('edge').version('latest')
 */
 
 function compare(a, b) {
