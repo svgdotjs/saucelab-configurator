@@ -62,7 +62,7 @@ function predicateBuilder() {
 
   const API = {
     browser(name) {
-      log("browser", name)
+      // log("browser", name)
       predicates.push(compose(filter(browser(name)), browserNames))
       // previousExpressions.add(browserNames)
       return this
