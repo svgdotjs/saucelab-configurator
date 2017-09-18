@@ -13,7 +13,9 @@ function testBuilder() {
   const startTime = Date.now()
   const tests = []
   let timer, hadError = false
+
   return function test(desc, f) {
+    // TODO: turns below logic into a composition of functions
     tests.push({desc, f})
     clearTimeout(timer)
     timer = setTimeout(() => {
@@ -100,12 +102,30 @@ test('predicate.browser', () => {
   })
 })
 
+test('predicate.platform = android', () => {
+  let actual
+  let expected = [{
+    base: 'SauceLabs',
+    browserName: 'Android',
+    appiumVersion: '1.5.3',
+    deviceName: 'Samsung Galaxy S7 Device',
+    deviceOrientation: 'portrait',
+    platformVersion: '6.0',
+    platformName: 'Android'
+  }]
+
+  let predicate = predicateBuilder()
+  predicate.platform('android')
+  actual = predicate.exec()
+
+  compare(actual, expected)
+})
+
 
 // compose(log, removeDuplicates, sort, map(lowerCase), map(dot('browserName')))(predicate.browsers)
 // log(predicate.browser('opera')/*.platforms*/)
 
 /*
-predicate.test = predicate.browser('opera').version('12').platform('win xp')
 predicate.test = predicate.platform('android').browser('android')
 predicate.test = predicate.platform('ios').top(1)
 predicate.test = predicate.browser('edge').version('latest')

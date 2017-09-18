@@ -22,14 +22,17 @@ function predicateBuilder() {
 
   // Predicates
   // selectors
-  const platforms     = filter(d => !!d.platform) // filter(compose(is, dot('platform')))
+  const platforms     = filter(d => !!d.platform || !!d.platformName) // filter(compose(is, dot('platform')))
   const platformNames = filter(d => !!d.platformName) // filter(compose(is, dot('platformName')))
   const browserNames  = filter(d => !!d.browserName) // filter(compose(is, dot('browserName')))
   const versions      = filter(d => !!d.version)
   // filter helper
-  const browser   = curry( (name, d) => d.browserName.toLowerCase() === name )
-  const OS        = curry( (name, d) => d.platform.toLowerCase().indexOf(name) !== -1 )
   const version   = curry( (v, d)    => d.version.startsWith(v))
+  const browser   = curry( (name, d) => d.browserName.toLowerCase() === name )
+  const OS        = curry( (name, d) => {
+    let platform = d.platform || d.platformName
+    return platform.toLowerCase().indexOf(name) !== -1
+  })
   // filter
   const chrome    = browser('chrome')
   const IE        = browser('internet explorer')
