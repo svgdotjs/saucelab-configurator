@@ -48,12 +48,14 @@ function testBuilder() {
 test('Prepare predicate.browser', () => {
   test('test predicate.browser("firefox")', () => {
     let actual
-    let expected = [ { base: 'SauceLabs', browserName: 'firefox', version: 'latest' } ]
+    let expected = [
+      { browserName: 'firefox', version: 'latest', base: 'SauceLabs' },
+      { browserName: 'firefox', version: '55.0', platform: 'Windows 10', base: 'SauceLabs' }
+    ]
 
     let predicate = predicateBuilder()
     predicate.browser('firefox')
     actual = predicate.exec()
-
     compare(actual, expected)
   })
 
@@ -156,16 +158,64 @@ test('Prepare predicate.platform', () => {
     actual = predicate.exec()
     compare(actual, expected)
   })
+
+  test('test predicate.platform("ios")', () => {
+    let actual
+    let expected = [{
+        browserName: 'Safari',
+        appiumVersion: '1.6.4',
+        deviceName: 'iPhone SE Simulator',
+        deviceOrientation: 'portrait',
+        platformVersion: '10.2',
+        platformName: 'iOS',
+        base: 'SauceLabs'
+      },
+      {
+        browserName: 'Safari',
+        appiumVersion: '1.6.5',
+        deviceName: 'iPhone SE Simulator',
+        deviceOrientation: 'portrait',
+        platformVersion: '10.3',
+        platformName: 'iOS',
+        base: 'SauceLabs'
+      }
+    ]
+
+    let predicate = predicateBuilder()
+    predicate.platform('ios')
+    actual = predicate.exec()
+    compare(actual, expected)
+  })
+
+  test('test predicate.platform("ios").top(1)', () => {
+    let actual
+    let expected = [{
+      base: 'SauceLabs',
+      browserName: 'Safari',
+      deviceName: 'iPhone SE Simulator',
+      deviceOrientation: 'portrait',
+      platformVersion: '10.2',
+      platformName: 'iOS',
+      appiumVersion: '1.6.4'
+    }]
+
+    let predicate = predicateBuilder()
+    predicate.platform('ios').top(1)
+    actual = predicate.exec()
+
+    compare(actual, expected)
+  })
 })
+
+/*
+predicate.test = predicate.platform('ios').top(1)
+*/
 
 /*
 query for all available browsers:
 compose(log, removeDuplicates, sort, map(lowerCase), map(dot('browserName')))(predicate.browsers)
-*/
-// log(predicate.browser('opera')/*.platforms*/)
-
-/*
-predicate.test = predicate.platform('ios').top(1)
+query for all Opera browsers that has the field platform or platformName
+log(predicate.browser('opera').platforms)
 */
 
 function compare(a, b) {

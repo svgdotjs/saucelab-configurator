@@ -91,6 +91,10 @@ function predicateBuilder() {
       predicates.push(compose(filter(version(v)), versions))
       return this
     },
+    top(number) {
+      predicates.push(take(number))
+      return this
+    },
     exec() {
       return predicates.reduce((a,f) => f(a), availablePlatforms)
     }

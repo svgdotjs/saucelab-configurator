@@ -1,6 +1,8 @@
 # saucelab-configurator
 A cli tool to create configurations objects for karma-saucelabs-launcher
 
+[Platform Configurator](https://wiki.saucelabs.com/display/DOCS/Platform+Configurator#/)
+
 
 ## Inspiration
 

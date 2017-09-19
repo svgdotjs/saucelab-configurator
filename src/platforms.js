@@ -17,49 +17,51 @@ module.exports = ([
   // browserName: 'Chrome',
   platformVersion: '6.0',
   platformName: 'Android'
-},
-{
-  base: 'SauceLabs',
+}, {
   browserName: 'Android',
   deviceName: 'Android Emulator',
   deviceOrientation: 'portrait'
 }, {
-  base: 'SauceLabs',
   browserName: 'firefox',
   version: 'latest'
 }, {
-  base: 'SauceLabs',
   browserName: 'chrome',
   version: 'latest'
 }, {
-  base: 'SauceLabs',
   browserName: 'MicrosoftEdge',
   version: 'latest',
   platform: 'Windows 10'
 }, {
-  base: 'SauceLabs',
+  browserName: 'firefox',
+  version: '55.0',
+  platform: 'Windows 10'
+}, {
   browserName: 'safari',
   platform: 'macOS 10.12',
   version: '10.0'
 }, {
-  base: 'SauceLabs',
   browserName: 'Safari',
+  appiumVersion: '1.6.4',
   deviceName: 'iPhone SE Simulator',
   deviceOrientation: 'portrait',
   platformVersion: '10.2',
   platformName: 'iOS'
 }, {
-  base: 'SauceLabs',
+  browserName: 'Safari',
+  appiumVersion: '1.6.5',
+  deviceName: 'iPhone SE Simulator',
+  deviceOrientation: 'portrait',
+  platformVersion: '10.3',
+  platformName: 'iOS'
+}, {
   browserName: 'internet explorer',
   platform: 'Windows XP',
   version: '6.0'
 }, {
-  base: 'SauceLabs',
   browserName: 'safari',
   platform: 'OS X 10.11',
   version: '9.0'
 }, {
-  base: 'SauceLabs',
   browserName: 'opera',
   platform: 'Linux',
   version: '12.15'
