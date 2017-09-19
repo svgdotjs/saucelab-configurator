@@ -4,7 +4,6 @@
 
 module.exports = predicateBuilder
 
-const availablePlatforms = require('./platforms')
 const Prelude = require('./lib/Prelude')
 const from = require('./lib/from')
 
@@ -16,8 +15,11 @@ let compose, curry, filter, dot, log, each, map, take, duplicates, sort, removeD
 
 /**
  * PredicateBuilder
+ * @param {module} [context=module] optional module context for loading platforms
+ * @param {string} [platformsPath="./platforms"] optional path from module to load platforms
  */
-function predicateBuilder() {
+function predicateBuilder(context = module, platformsPath = './platforms') {
+  const availablePlatforms = context.require(platformsPath)
   const predicates = []
 
   // Predicates
@@ -63,7 +65,7 @@ function predicateBuilder() {
 
   log(mac(availablePlatforms)[0] === macs[0]) // referencial transparency*/
 
-  let previousExpressions = new Set()
+  // let previousExpressions = new Set()
 
   const API = {
     browser(name) {
@@ -75,7 +77,11 @@ function predicateBuilder() {
     },
     get browsers() {
       // previousExpressions.clear()
-      return compose(removeDuplicates, sort, map(lowerCase), map(dot('browserName')))(browserNames(availablePlatforms))
+      let ap
+      if(predicates.length > 0) ap = this.exec()
+      else ap = availablePlatforms
+
+      return compose(removeDuplicates, sort, map(lowerCase), map(dot('browserName')))(browserNames(ap))
     },
     platform(name) {
       // log("platform", name)
@@ -83,7 +89,7 @@ function predicateBuilder() {
       return this
     },
     get platforms() {
-      previousExpressions.clear()
+      // previousExpressions.clear()
       return safariPlatforms(availablePlatforms)//platforms(availablePlatforms)
     },
     version(v) {
