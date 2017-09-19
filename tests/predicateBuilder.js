@@ -207,9 +207,25 @@ test('Prepare predicate.platform', () => {
   })
 })
 
-/*
-predicate.test = predicate.platform('ios').top(1)
-*/
+test('Prepare query tests for predicate.browser', () => {
+  test('test predicate.browsers', () => {
+    let actual
+    let expected = [
+      'android',
+      'chrome',
+      'firefox',
+      'internet explorer',
+      'microsoftedge',
+      'opera',
+      'safari'
+    ]
+
+    let predicate = predicateBuilder()
+    actual = predicate.browsers
+
+    compare(actual, expected)
+  })
+})
 
 /*
 query for all available browsers:

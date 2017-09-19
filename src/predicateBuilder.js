@@ -74,8 +74,8 @@ function predicateBuilder() {
       //return buildAPI(API.version)
     },
     get browsers() {
-      previousExpressions.clear()
-      return browserNames(availablePlatforms)
+      // previousExpressions.clear()
+      return compose(removeDuplicates, sort, map(lowerCase), map(dot('browserName')))(browserNames(availablePlatforms))
     },
     platform(name) {
       // log("platform", name)
