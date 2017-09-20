@@ -6,6 +6,7 @@ module.exports = predicateBuilder
 
 const Prelude = require('./lib/Prelude')
 const from = require('./lib/from')
+const path = require('path')
 
 let compose, curry, filter, dot, log, each, map, take, duplicates, sort, removeDuplicates
 ({compose, curry, filter, dot, log, each, map, take, duplicates, sort, removeDuplicates} = from (Prelude))
@@ -15,11 +16,10 @@ let compose, curry, filter, dot, log, each, map, take, duplicates, sort, removeD
 
 /**
  * PredicateBuilder
- * @param {module} [context=module] optional module context for loading platforms
- * @param {string} [platformsPath="./platforms"] optional path from module to load platforms
+ * @param {string} [platformsPath="./platforms"] optional Absolute path to load platforms from via `require()`
  */
-function predicateBuilder(context = module, platformsPath = './platforms') {
-  const availablePlatforms = context.require(platformsPath)
+function predicateBuilder(platformsPath = './platforms') {
+  const availablePlatforms = require(platformsPath)
   const predicates = []
 
   // Predicates

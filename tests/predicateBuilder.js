@@ -45,6 +45,8 @@ function testBuilder() {
   }
 }
 
+const testFixture = __dirname + '/fixture/platforms'
+
 test('Prepare predicate.browser', () => {
   test('test predicate.browser("firefox")', () => {
     let actual
@@ -53,7 +55,7 @@ test('Prepare predicate.browser', () => {
       { browserName: 'firefox', version: '55.0', platform: 'Windows 10', base: 'SauceLabs' }
     ]
 
-    let predicate = predicateBuilder(module, './fixture/platforms')
+    let predicate = predicateBuilder(testFixture)
     predicate.browser('firefox')
     actual = predicate.exec()
     compare(actual, expected)
@@ -81,7 +83,7 @@ test('Prepare predicate.browser', () => {
       }
     ]
 
-    let predicate = predicateBuilder(module, './fixture/platforms')
+    let predicate = predicateBuilder(testFixture)
     predicate.browser('opera')
     actual = predicate.exec()
 
@@ -97,7 +99,7 @@ test('Prepare predicate.browser', () => {
       base: 'SauceLabs'
     }]
 
-    let predicate = predicateBuilder(module, './fixture/platforms')
+    let predicate = predicateBuilder(testFixture)
     predicate.browser('opera').version('11').platform('windows')
     actual = predicate.exec()
 
@@ -113,7 +115,7 @@ test('Prepare predicate.browser', () => {
       platform: 'Windows 10'
     }]
 
-    let predicate = predicateBuilder(module, './fixture/platforms')
+    let predicate = predicateBuilder(testFixture)
     predicate.browser('microsoftedge').version('latest')
     actual = predicate.exec()
 
@@ -134,26 +136,7 @@ test('Prepare predicate.platform', () => {
       platformName: 'Android'
     }]
 
-    let predicate = predicateBuilder(module, './fixture/platforms')
-    predicate.platform('android')
-    actual = predicate.exec()
-
-    compare(actual, expected)
-  })
-
-  test('test predicate.platform("android").browser("android")', () => {
-    let actual
-    let expected = [{
-      base: 'SauceLabs',
-      browserName: 'Android',
-      appiumVersion: '1.5.3',
-      deviceName: 'Samsung Galaxy S7 Device',
-      deviceOrientation: 'portrait',
-      platformVersion: '6.0',
-      platformName: 'Android'
-    }]
-
-    let predicate = predicateBuilder(module, './fixture/platforms')
+    let predicate = predicateBuilder(testFixture)
     predicate.platform('android').browser('android')
     actual = predicate.exec()
     compare(actual, expected)
@@ -181,7 +164,7 @@ test('Prepare predicate.platform', () => {
       }
     ]
 
-    let predicate = predicateBuilder(module, './fixture/platforms')
+    let predicate = predicateBuilder(testFixture)
     predicate.platform('ios')
     actual = predicate.exec()
     compare(actual, expected)
@@ -199,7 +182,7 @@ test('Prepare predicate.platform', () => {
       appiumVersion: '1.6.4'
     }]
 
-    let predicate = predicateBuilder(module, './fixture/platforms')
+    let predicate = predicateBuilder(testFixture)
     predicate.platform('ios').top(1)
     actual = predicate.exec()
 
@@ -220,7 +203,7 @@ test('Prepare query tests', () => {
       'safari'
     ]
 
-    let predicate = predicateBuilder(module, './fixture/platforms')
+    let predicate = predicateBuilder(testFixture)
     actual = predicate.browsers
 
     compare(actual, expected)
@@ -230,7 +213,7 @@ test('Prepare query tests', () => {
     let actual
     let expected = [ 'firefox', 'internet explorer', 'microsoftedge', 'opera' ]
 
-    let predicate = predicateBuilder(module, './fixture/platforms')
+    let predicate = predicateBuilder(testFixture)
     actual = predicate.platform('windows').browsers
 
     compare(actual, expected)
@@ -240,7 +223,7 @@ test('Prepare query tests', () => {
     let actual
     let expected = [ 'firefox', 'internet explorer', 'microsoftedge', 'opera' ]
 
-    let predicate = predicateBuilder(module, './fixture/platforms')
+    let predicate = predicateBuilder(testFixture)
     actual = predicate.platforms
 log(actual)
     // compare(actual, expected)

@@ -12,7 +12,7 @@
     "sauceconfig": "bin/sauceconfig"
   },
   "scripts": {
-    "test": "node tests/*"
+    "test": "node tests/*.js"
   },
   "repository": {
     "type": "git",
