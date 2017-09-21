@@ -20,7 +20,8 @@ function Prelude() {
     duplicates,
     sort,
     removeDuplicates,
-    repeat
+    repeat,
+    union
   }
 
   function curry(f) {
@@ -65,10 +66,10 @@ function Prelude() {
     each((v,k) => m.push(f(v, k)), data)
     return m
   }
-  function take(n, a, accu = []) {
-    if(a.length === 0 || n == 0) return accu
-    accu.push(a[0])
-    return take( n - 1, a.slice(1), accu ) // tail call
+  function take(n, data, accu = []) {
+    if(data.length === 0 || n == 0) return accu
+    accu.push(data[0])
+    return take( n - 1, data.slice(1), accu ) // tail call
   }
   function sort(a) {
     return Array.prototype.sort.call(a)
@@ -116,12 +117,15 @@ function Prelude() {
   function identity(x) {
     return x
   }
-  function repeat(value, times) {
+  function repeat(times, value) {
     return generator(() => value, 0, times).join('')
   }
   function generator(f, start, stop, accu = []) {
     if(start >= stop) return accu
     accu.push(f(start))
     return generator(f, start + 1, stop, accu) // tail call
+  }
+  function union(a,b, data) {
+    return a(data).concat(b(data))
   }
 }

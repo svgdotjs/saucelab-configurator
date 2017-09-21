@@ -8,8 +8,8 @@ const Prelude = require('./lib/Prelude')
 const from = require('./lib/from')
 const path = require('path')
 
-let compose, curry, filter, dot, log, each, map, take, duplicates, sort, removeDuplicates
-({compose, curry, filter, dot, log, each, map, take, duplicates, sort, removeDuplicates} = from (Prelude))
+let compose, curry, filter, dot, log, each, map, take, duplicates, sort, removeDuplicates, union
+({compose, curry, filter, dot, log, each, map, take, duplicates, sort, removeDuplicates, union} = from (Prelude))
 
 // let fstTwo = map(take(2))
 // console.log(fstTwo(['jim', 'kate']))
@@ -30,7 +30,7 @@ function predicateBuilder(platformsPath = './platforms') {
   const versions      = filter(d => !!d.version)
   // filter helper
   const version   = curry( (v, d)    => d.version.startsWith(v))
-  const browser   = curry( (name, d) => d.browserName.toLowerCase() === name )
+  const browser   = curry( (name, d) => d.browserName.toLowerCase().indexOf(name) !== -1 )
   const OS        = curry( (name, d) => {
     let platform = d.platform || d.platformName
     return platform.toLowerCase().indexOf(name) !== -1
@@ -57,13 +57,14 @@ function predicateBuilder(platformsPath = './platforms') {
 
   let safariPlatforms = compose(filter(safari) , platforms)
 
-  /*log( compose(filter(android), browserNames)(availablePlatforms) )
+  /*
+  log( compose(filter(android), browserNames)(availablePlatforms) )
   let wins  = compose(filter(WIN), platforms)(availablePlatforms)
   let ioses = compose(filter(ios), platformNames)(availablePlatforms)
   let macs  = mac(availablePlatforms)
   log( wins, ioses, macs, platformAndroid )
-
-  log(mac(availablePlatforms)[0] === macs[0]) // referencial transparency*/
+  */
+  // log(mac(availablePlatforms)[0] === macs[0]) // referencial transparency*/
 
   // let previousExpressions = new Set()
 
@@ -89,8 +90,15 @@ function predicateBuilder(platformsPath = './platforms') {
       return this
     },
     get platforms() {
+      let ap
+      if(predicates.length > 0) ap = this.exec()
+      else ap = availablePlatforms
+
       // previousExpressions.clear()
-      return safariPlatforms(availablePlatforms)//platforms(availablePlatforms)
+      // return safariPlatforms(availablePlatforms)//platforms(availablePlatforms)
+      let plNames = compose(map(dot('platformName')) ,only('platformName'))
+      let pl      = compose(map(dot('platform')), only('platform'))
+      return compose(removeDuplicates, sort, map(lowerCase), union(plNames, pl))(ap)
     },
     version(v) {
       // log("version", v)
@@ -148,17 +156,6 @@ function predicateBuilder(platformsPath = './platforms') {
   define(String.prototype, "padLeft", "".padStart);
 */
 }
-
-let predicate = predicateBuilder()
-//TODO: move all tests to tests/predicateBuilder.js
-// compose(log, removeDuplicates, sort, map(lowerCase), map(dot('browserName')))(predicate.browsers)
-// log(predicate.browser('opera')/*.platforms*/)
-/*
-predicate.test = predicate.browser('opera').version('12').platform('win xp')
-predicate.test = predicate.platform('android').browser('android')
-predicate.test = predicate.platform('ios').top(1)
-predicate.test = predicate.browser('edge').version('latest')
-*/
 
 /**
  * Filter to select objects that contain the property,

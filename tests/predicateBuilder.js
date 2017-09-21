@@ -4,9 +4,10 @@ const Prelude = require('../src/lib/Prelude')
 const from = require('../src/lib/from')
 const predicateBuilder = require('../src/predicateBuilder')
 
-let log, each, repeat
-({log, each, repeat} = from (Prelude))
+let map, log, each, repeat
+({map, log, each, repeat} = from (Prelude))
 
+const QUIETE = map((a => a === '-q' | a === '--quiet'), process.argv).some(x => x)
 const test = testBuilder()
 function testBuilder() {
   const startTime = Date.now()
@@ -21,19 +22,22 @@ function testBuilder() {
 
       each((d, n) => {
         if(d) {
-          log(`${repeat('\t', indent)}Running: ${d.desc}`)
+
+          if(!QUIETE) log(`${repeat(indent, '\t')}Running: ${d.desc}`)
+
           try {
             d.f()
           } catch(err) {
             console.warn(err)
             hadError = true
           }
+
           tests[n] = null
         }
       }, tests)
 
       if(!hadError && tests.every(t => t === null)) {
-        log(`\n⍻ All tests pass (${Date.now() - startTime}ms)`)
+        if(!QUIETE) log(`\n⍻ All tests pass (${Date.now() - startTime}ms)`)
         process.exit(0)
       } else if(hadError) {
         process.exit(1)
@@ -46,6 +50,7 @@ function testBuilder() {
 }
 
 const testFixture = __dirname + '/fixture/platforms'
+
 
 test('Prepare predicate.browser', () => {
   test('test predicate.browser("firefox")', () => {
@@ -219,15 +224,34 @@ test('Prepare query tests', () => {
     compare(actual, expected)
   })
 
-  /* test('test predicate.platforms', () => {
+  test('test predicate.platforms', () => {
     let actual
-    let expected = [ 'firefox', 'internet explorer', 'microsoftedge', 'opera' ]
+    let expected = [
+      'android',
+      'ios',
+      'linux',
+      'macos 10.12',
+      'os x 10.11',
+      'windows 10',
+      'windows 7',
+      'windows xp'
+    ]
 
     let predicate = predicateBuilder(testFixture)
     actual = predicate.platforms
-log(actual)
-    // compare(actual, expected)
-  }) */
+
+    compare(actual, expected)
+  })
+
+  test('test predicate.browser("safari").platforms', () => {
+    let actual
+    let expected = [ 'ios', 'macos 10.12', 'os x 10.11' ]
+
+    let predicate = predicateBuilder(testFixture)
+    actual = predicate.browser('safari').platforms
+
+    compare(actual, expected)
+  })
 })
 
 /*
