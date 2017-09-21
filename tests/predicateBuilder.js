@@ -7,7 +7,7 @@ const predicateBuilder = require('../src/predicateBuilder')
 let map, log, each, repeat
 ({map, log, each, repeat} = from (Prelude))
 
-const QUIETE = map((a => a === '-q' | a === '--quiet'), process.argv).some(x => x)
+const QUIET = map((a => a === '-q' | a === '--quiet'), process.argv).some(x => x)
 const test = testBuilder()
 function testBuilder() {
   const startTime = Date.now()
@@ -23,7 +23,7 @@ function testBuilder() {
       each((d, n) => {
         if(d) {
 
-          if(!QUIETE) log(`${repeat(indent, '\t')}Running: ${d.desc}`)
+          if(!QUIET) log(`${repeat(indent, '\t')}Running: ${d.desc}`)
 
           try {
             d.f()
@@ -37,7 +37,7 @@ function testBuilder() {
       }, tests)
 
       if(!hadError && tests.every(t => t === null)) {
-        if(!QUIETE) log(`\n⍻ All tests pass (${Date.now() - startTime}ms)`)
+        if(!QUIET) log(`\n⍻ All tests pass (${Date.now() - startTime}ms)`)
         process.exit(0)
       } else if(hadError) {
         process.exit(1)
@@ -49,8 +49,8 @@ function testBuilder() {
   }
 }
 
+// load platforms from a fixed source
 const testFixture = __dirname + '/fixture/platforms'
-
 
 test('Prepare predicate.browser', () => {
   test('test predicate.browser("firefox")', () => {
@@ -253,13 +253,6 @@ test('Prepare query tests', () => {
     compare(actual, expected)
   })
 })
-
-/*
-query for all available browsers:
-compose(log, removeDuplicates, sort, map(lowerCase), map(dot('browserName')))(predicate.browsers)
-query for all Opera browsers that has the field platform or platformName
-log(predicate.browser('opera').platforms)
-*/
 
 function compare(a, b) {
   let testRan = false
