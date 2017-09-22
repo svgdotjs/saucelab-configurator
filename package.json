@@ -23,7 +23,7 @@
   "license": "MIT",
   "devDependencies": {
     "flow-bin": "^0.45.0",
-    "flow-remove-types": "^1.2.0"
+    "flow-remove-types": "^1.2.1"
   },
   "bugs": {
     "url": "https://github.com/svgdotjs/saucelab-configurator/issues"
