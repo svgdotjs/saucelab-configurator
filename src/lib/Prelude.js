@@ -97,8 +97,8 @@ function Prelude() {
     let xs = a.slice()
     let x = xs.shift()
     return elem(x, xs)
-      ? removeDuplicates(xs)
-      : [x].concat(removeDuplicates(xs))
+      ? removeDuplicates1(xs)
+      : [x].concat(removeDuplicates1(xs))
   }
   function removeDuplicates(a) {
     let xs = []

@@ -24,10 +24,10 @@ function predicateBuilder(platformsPath = './platforms') {
 
   // Predicates
   // selectors
-  const platforms     = filter(d => !!d.platform || !!d.platformName) // filter(compose(is, dot('platform')))
-  const platformNames = filter(d => !!d.platformName) // filter(compose(is, dot('platformName')))
-  const browserNames  = filter(d => !!d.browserName) // filter(compose(is, dot('browserName')))
-  const versions      = filter(d => !!d.version)
+  const platforms     = filter(d => !!d.platform || !!d.platformName) // = filter(compose(is, dot('platform')))
+  const platformNames = filter(d => !!d.platformName) // = filter(compose(is, dot('platformName')))
+  const browserNames  = filter(d => !!d.browserName) // = filter(compose(is, dot('browserName')))
+  const versions      = filter(d => !!d.version) // = only('version') = filter(compose(is, dot('version')))
   // filter helper
   const version   = curry( (v, d)    => d.version.startsWith(v))
   const browser   = curry( (name, d) => d.browserName.toLowerCase().indexOf(name) !== -1 )
@@ -35,53 +35,19 @@ function predicateBuilder(platformsPath = './platforms') {
     let platform = d.platform || d.platformName
     return platform.toLowerCase().indexOf(name) !== -1
   })
-  // filter
-  const chrome    = browser('chrome')
-  const IE        = browser('internet explorer')
-  const edge      = browser('microsoftedge')
-  const FF        = browser('firefox')
-  const android   = browser('android')
-  const safari    = browser('safari')
-  const opera     = browser('opera')
 
-  const WIN       = OS('windows')
-  const ios       = d => d.platformName.toLowerCase().indexOf('ios') !== -1
-  //const pliOS     = compose(filter(compose(d => d.indexOf('ios') !== -1, lowerCase, dot('platformName'))), only('platformName'))
-  const plmac     = d => d.platform.toLowerCase().indexOf('macos') !== -1 || d.platform.toLowerCase().indexOf('os x') !== -1
-  // const plmac2    = compose(filter(compose(d => d.indexOf('macos') !== -1 || d.indexOf('os x') !== -1, lowerCase, dot('platform'))), filter(compose(is, dot('platform'))))
-  // log(plmac2(availablePlatforms))
-  // const below10 = filter(compose(d => d < 10, dot('version')))
-
-  const mac       = compose(filter(plmac), platforms)
-  const platformAndroid = compose(filter(d => d.platformName.toLowerCase().indexOf('android') !== -1), platformNames)(availablePlatforms)
-
-  let safariPlatforms = compose(filter(safari) , platforms)
-
-  /*
-  log( compose(filter(android), browserNames)(availablePlatforms) )
-  let wins  = compose(filter(WIN), platforms)(availablePlatforms)
-  let ioses = compose(filter(ios), platformNames)(availablePlatforms)
-  let macs  = mac(availablePlatforms)
-  log( wins, ioses, macs, platformAndroid )
-  */
-  // log(mac(availablePlatforms)[0] === macs[0]) // referencial transparency*/
-
-  // let previousExpressions = new Set()
+  function getAvailablePlatforms() {
+    return predicates.length > 0 ? API.exec() : availablePlatforms
+  }
 
   const API = {
     browser(name) {
       // log("browser", name)
       predicates.push(compose(filter(browser(name)), browserNames))
-      // previousExpressions.add(browserNames)
       return this
-      //return buildAPI(API.version)
     },
     get browsers() {
-      // previousExpressions.clear()
-      let ap
-      if(predicates.length > 0) ap = this.exec()
-      else ap = availablePlatforms
-
+      let ap = getAvailablePlatforms()
       return compose(removeDuplicates, sort, map(lowerCase), map(dot('browserName')))(browserNames(ap))
     },
     platform(name) {
@@ -90,12 +56,8 @@ function predicateBuilder(platformsPath = './platforms') {
       return this
     },
     get platforms() {
-      let ap
-      if(predicates.length > 0) ap = this.exec()
-      else ap = availablePlatforms
+      let ap = getAvailablePlatforms()
 
-      // previousExpressions.clear()
-      // return safariPlatforms(availablePlatforms)//platforms(availablePlatforms)
       let plNames = compose(map(dot('platformName')) ,only('platformName'))
       let pl      = compose(map(dot('platform')), only('platform'))
       return compose(removeDuplicates, sort, map(lowerCase), union(plNames, pl))(ap)
@@ -105,6 +67,10 @@ function predicateBuilder(platformsPath = './platforms') {
       predicates.push(compose(filter(version(v)), versions))
       return this
     },
+    get versions() {
+      let ap = getAvailablePlatforms()
+      return compose(removeDuplicates, sort, map(dot('version')), versions)(ap)
+    },
     top(number) {
       predicates.push(take(number))
       return this
@@ -112,12 +78,6 @@ function predicateBuilder(platformsPath = './platforms') {
     exec() {
       return predicates.reduce((a,f) => f(a), availablePlatforms)
     }
-    // set test(p) {
-    //   predicates.push(p)
-    // },
-    // get test() {
-    //   return predicates.reduce((a,f) => f(a), availablePlatforms)
-    // }
   }
 
   return API

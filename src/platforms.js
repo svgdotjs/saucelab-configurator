@@ -26,7 +26,8 @@ module.exports = ([
   version: 'latest'
 }, {
   browserName: 'chrome',
-  version: 'latest'
+  version: 'latest',
+  base: 'SauceLabs'
 }, {
   browserName: 'MicrosoftEdge',
   version: 'latest',

@@ -23,7 +23,8 @@ module.exports = ([
   deviceOrientation: 'portrait'
 }, {
   browserName: 'firefox',
-  version: 'latest'
+  version: 'latest',
+  base: 'SauceLabs'
 }, {
   browserName: 'chrome',
   version: 'latest'

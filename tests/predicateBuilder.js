@@ -126,6 +126,27 @@ test('Prepare predicate.browser', () => {
 
     compare(actual, expected)
   })
+
+  test('test predicate.browser("firefox").versions', () => {
+    let actual
+    let expected = [ '55.0', 'latest' ]
+
+    let predicate = predicateBuilder(testFixture)
+    actual = predicate.browser('firefox').versions
+
+    compare(actual, expected)
+  })
+
+  test('test predicate.browser("safari").versions', () => {
+    //TODO: should safari versions give iOS safari version (is it browser version or OS version)?
+    let actual
+    let expected = [ '10.0', '9.0' ]
+
+    let predicate = predicateBuilder(testFixture)
+    actual = predicate.browser('safari').versions
+// log(actual)
+    compare(actual, expected)
+  })
 })
 
 test('Prepare predicate.platform', () => {
