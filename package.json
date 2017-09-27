@@ -1,18 +1,20 @@
 {
-  "name": "saucelab-configurator",
-  "version": "1.0.0",
+  "name": "sauceconfig",
+  "version": "1.0.0-alpha",
   "description": "A cli tool to create configurations objects for karma-saucelabs-launcher",
   "keywords": [
     "karma",
-    "fpm",
-    "cli"
+    "cli",
+    "config"
   ],
   "main": "index.js",
   "bin": {
     "sauceconfig": "bin/sauceconfig"
   },
   "scripts": {
-    "test": "node tests/*.js"
+    "test": "node tests/*.js",
+    "install": "tabtab install --auto",
+    "uninstall": "tabtab uninstall --auto"
   },
   "repository": {
     "type": "git",

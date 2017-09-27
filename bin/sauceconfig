@@ -1,5 +1,41 @@
-#!/bin/sh
-':' //; exec "$(command -v nodejs || command -v node)" "$0" "$@"
+#! /usr/bin/env node
+const predicateBuilder = require('../src/predicateBuilder')(/*use default path to load platforms*/)
+const Prelude = require('../src/lib/Prelude')
+const from = require('../src/lib/from')
 
-process.env.DEBUG = process.env.DEBUG || 'tabtab*';
-require('../src/cli')
+// Ex. bin/ entry point for a "program" package
+const tab = require('tabtab')({
+    name: 'sauceconfig'
+  , cache: false // tabtab uses a file cache which is probably slower than re-querying predicateBuilder
+})
+
+let compose, each, log, map
+({compose, each, log, map} = from (Prelude))
+
+let identity = x => x
+// let logger = each(log)
+let prop = (value, key) => key
+
+// General handler. Gets called on `program <tab>` and `program stuff ... <tab>`
+tab.on('sauceconfig', function(data, done) {
+  try {
+    done(null, map(prop, predicateBuilder))
+  } catch(err) {
+    console.log(err)
+  }
+  finally {
+    // General handler
+    // done(null, ['foo', 'bar'])
+  }
+})
+
+// Specific handler. Gets called on `program list <tab>`
+tab.on('list', function(data, done) {
+  console.log(data)
+
+  done(null, ['file.js', 'file2.js'])
+})
+
+// Start must be called to register the completion commands and listen for
+// completion.
+tab.start()
