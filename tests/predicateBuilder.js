@@ -4,8 +4,7 @@ const Prelude = require('../src/lib/Prelude')
 const from = require('../src/lib/from')
 const predicateBuilder = require('../src/predicateBuilder')
 
-let map, log, each, repeat
-({map, log, each, repeat} = from (Prelude))
+let {map, log, each, repeat} = from (Prelude)
 
 const QUIET = map((a => a === '-q' | a === '--quiet'), process.argv).some(x => x)
 const test = testBuilder()
@@ -17,8 +16,8 @@ function testBuilder() {
   return function test(desc, f) {
     // TODO: turn below logic into a composition of functions
     tests.push({desc, f})
-    clearTimeout(timer)
-    timer = setTimeout(() => {
+    clearImmediate(timer)
+    timer = setImmediate(() => {
 
       each((d, n) => {
         if(d) {
@@ -270,7 +269,17 @@ test('Prepare query tests', () => {
 
     let predicate = predicateBuilder(testFixture)
     actual = predicate.browser('safari').versions
-// log(actual)
+
+    compare(actual, expected)
+  })
+
+  test('test predicate.top(1) - Nonsense test', () => {
+    let actual
+    let expected
+
+    let predicate = expected = predicateBuilder(testFixture)
+    actual = predicate.top(1)
+
     compare(actual, expected)
   })
 })
@@ -280,11 +289,15 @@ function compare(a, b) {
   for(let prop in a) {
     if(!Object.prototype.hasOwnProperty.call(a, prop)) continue
 
-    if(a[prop] instanceof Object) compare(a[prop], b[prop])
+    // use typeof because instanceof classifies functions as Object
+    if(typeof a[prop] === 'object') compare(a[prop], b[prop])
     else if(a[prop] !== b[prop]) throw new Error(`${a[prop]} is not the same as ${b[prop]}`)
 
     testRan = true
   }
-  if(!testRan) throw new Error('No test ran')
+
+  if(Array.isArray(a) && Array.isArray(b) && a.length + b.length === 0) testRan = true
+
+  if(!testRan) throw new Error('No comparison made')
   return true
 }

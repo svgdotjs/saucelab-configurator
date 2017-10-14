@@ -21,7 +21,7 @@ function Prelude() {
     sort,
     removeDuplicates,
     repeat,
-    union
+    merge
   }
 
   function curry(f) {
@@ -125,7 +125,7 @@ function Prelude() {
     accu.push(f(start))
     return generator(f, start + 1, stop, accu) // tail call
   }
-  function union(a,b, data) {
+  function merge(a,b, data) {
     return a(data).concat(b(data))
   }
 }

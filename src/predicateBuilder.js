@@ -6,13 +6,8 @@ module.exports = predicateBuilder
 
 const Prelude = require('./lib/Prelude')
 const from = require('./lib/from')
-const path = require('path')
 
-let compose, curry, filter, dot, log, each, map, take, duplicates, sort, removeDuplicates, union
-({compose, curry, filter, dot, log, each, map, take, duplicates, sort, removeDuplicates, union} = from (Prelude))
-
-// let fstTwo = map(take(2))
-// console.log(fstTwo(['jim', 'kate']))
+let {compose, curry, filter, dot, log, each, map, take, duplicates, sort, removeDuplicates, merge} = from (Prelude)
 
 /**
  * PredicateBuilder
@@ -25,7 +20,7 @@ function predicateBuilder(platformsPath = './platforms') {
   // Predicates
   // selectors
   const platforms     = filter(d => !!d.platform || !!d.platformName) // = filter(compose(is, dot('platform')))
-  const platformNames = filter(d => !!d.platformName) // = filter(compose(is, dot('platformName')))
+  // const platformNames = filter(d => !!d.platformName) // = filter(compose(is, dot('platformName')))
   const browserNames  = filter(d => !!d.browserName) // = filter(compose(is, dot('browserName')))
   const versions      = filter(d => !!d.version) // = only('version') = filter(compose(is, dot('version')))
   // filter helper
@@ -60,7 +55,11 @@ function predicateBuilder(platformsPath = './platforms') {
 
       let plNames = compose(map(dot('platformName')) ,only('platformName'))
       let pl      = compose(map(dot('platform')), only('platform'))
-      return compose(removeDuplicates, sort, map(lowerCase), union(plNames, pl))(ap)
+      return compose(removeDuplicates, sort, map(lowerCase), merge(plNames, pl))(ap)
+    },
+    top(number) {
+      predicates.push(take(number))
+      return this
     },
     version(v) {
       // log("version", v)
@@ -71,14 +70,16 @@ function predicateBuilder(platformsPath = './platforms') {
       let ap = getAvailablePlatforms()
       return compose(removeDuplicates, sort, map(dot('version')), versions)(ap)
     },
-    top(number) {
-      predicates.push(take(number))
-      return this
-    },
     exec() {
       return predicates.reduce((a,f) => f(a), availablePlatforms)
     }
   }
+/* Doesn't work because API is not re-returned on each invocation of visible API methods
+  const secondaryCmds = ['top', 'version', 'versions']
+  if(predicates.length === 0) {
+    for(let n = 0, len = secondaryCmds.length; n < len; n++)
+      delete API[secondaryCmds[n]]
+  } */
 
   return API
 

@@ -1,25 +1,48 @@
 #! /usr/bin/env node
-const predicateBuilder = require('../src/predicateBuilder')(/*use default path to load platforms*/)
-const Prelude = require('../src/lib/Prelude')
-const from = require('../src/lib/from')
+
+'use strict'
+
+let predicateBuilder = require('../src/predicateBuilder')(/*use default path to load platforms*/)
+let Prelude = require('../src/lib/Prelude')
+let from = require('../src/lib/from')
 
 // Ex. bin/ entry point for a "program" package
-const tab = require('tabtab')({
+let tab = require('tabtab')({
     name: 'sauceconfig'
-  , cache: false // tabtab uses a file cache which is probably slower than re-querying predicateBuilder
+  , cache: false // set to false if updates to platforms.js should be reflected immediately
 })
 
-let compose, each, log, map
-({compose, each, log, map} = from (Prelude))
+let {compose, each, log, map, filter} = from (Prelude)
 
 let identity = x => x
 // let logger = each(log)
 let prop = (value, key) => key
 
+let secondaryCmds = ['top', 'version', 'versions', 'exec']
+function notIn(a) {
+  return !a
+}
+
+let allMethods = map(prop)
+let filteredMethods = compose(filter(methodName => secondaryCmds.indexOf(methodName) === -1), allMethods)
+let assignCompletion = each(method => tab.on(method, handler))
+let isIn = filter()
+
+function handler(data, done) {
+  // assignCompletion(allMethods)(predicateBuilder)
+  log("HEY", data)
+}
+
 // General handler. Gets called on `program <tab>` and `program stuff ... <tab>`
 tab.on('sauceconfig', function(data, done) {
   try {
-    done(null, map(prop, predicateBuilder))
+    log(data)
+
+    if(isIn(data))
+
+    let methods = filteredMethods(predicateBuilder)
+    assignCompletion(methods)
+    done(null, methods)
   } catch(err) {
     console.log(err)
   }
@@ -30,11 +53,11 @@ tab.on('sauceconfig', function(data, done) {
 })
 
 // Specific handler. Gets called on `program list <tab>`
-tab.on('list', function(data, done) {
-  console.log(data)
+// tab.on('list', function(data, done) {
+//   console.log(data)
 
-  done(null, ['file.js', 'file2.js'])
-})
+//   done(null, ['file.js', 'file2.js'])
+// })
 
 // Start must be called to register the completion commands and listen for
 // completion.
